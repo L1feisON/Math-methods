@@ -151,8 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Linear.hpp" />
-    <ClInclude Include="Methods.hpp" />
+    <ClInclude Include="DirectMethods.hpp" />
+    <ClInclude Include="IterativeMethods.hpp" />
+    <ClInclude Include="SpectralMethods.hpp" />
+    <ClInclude Include="Vector.hpp" />
+    <ClInclude Include="Matrix.hpp" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +169,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="matrix.txt" />
+    <Text Include="other.txt" />
+    <Text Include="out.txt" />
     <Text Include="vector.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

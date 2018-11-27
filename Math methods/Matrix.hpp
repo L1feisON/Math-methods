@@ -1,7 +1,6 @@
-#pragma once		
-
+#pragma once
 #include "pch.h"
-#include "Methods.hpp"
+#include "Vector.hpp"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -9,309 +8,9 @@
 #include <math.h>
 #include <string>
 
-
-//default values of the printing
-static int SETRANGE = 4;
-static int PRECISION = 6;
-
-
-//Function for setting range of the printing
-void setRange(int value)
-{
-	SETRANGE = value;
-}
-
-
-//Fuction for setting precision of the printing
-void setPrecision(int value)
-{
-	PRECISION = value;
-}
-
-
 template <class T>
-class Vector
-{
-public:
-	Vector(int const rows = 1, T const value = 0) : m_rows(rows)
-	{
-		m_ptr = new T[rows];
+class Vector;
 
-		for (int i = 0; i < m_rows; ++i)
-		{
-			m_ptr[i] = value;
-		}
-	}
-
-
-	Vector<T>(std::string fileName)
-	{
-		readFromFile(fileName);
-	}
-
-
-	~Vector()
-	{
-		this->Del();
-	}
-
-
-	Vector(Vector<T> const & vector)
-	{
-		m_rows = vector.m_rows;
-
-		m_ptr = new T[m_rows];
-		for (int i = 0; i < m_rows; ++i) {
-			m_ptr[i] = vector.m_ptr[i];
-		}
-	}
-
-
-	inline void Del()
-	{
-		delete[] m_ptr;
-	}
-
-
-	void readFromFile(std::string fileName)
-	{
-		using namespace std;
-
-		this->Del();
-		//create full file name
-		string format = ".txt";
-		fileName += format;
-
-		ifstream fin(fileName);
-
-		//if file open successfully
-		if (fin.is_open()) {
-
-			int count = 0; //num of numbers in file
-			T temp;
-
-			//counting numbers
-			while (!fin.eof()) {
-				fin >> temp;
-				count++;
-			}
-
-			fin.seekg(0, ios::beg);
-			fin.clear();
-
-			int count_space = 0;
-			char symbol;
-
-			while (!fin.eof()) {
-				fin.get(symbol);
-				if (symbol == ' ') count_space++;
-				if (symbol == '\n') break;
-			}
-
-			fin.seekg(0, ios::beg);
-			fin.clear();
-
-			m_rows = count / (count_space + 1);
-
-			//??
-			fin.seekg(0, ios::beg);
-			fin.clear();
-
-			m_ptr = new T[m_rows];
-			for (int i = 0; i < m_rows; ++i)
-				fin >> m_ptr[i];
-
-			fin.close();
-		}
-		else
-			cout << "File is not found";
-	}
-
-
-	Vector<T> & operator= (Vector<T> const & vector)
-	{
-		if (m_ptr != vector.m_ptr) {
-			this->Del();
-
-			m_rows = vector.m_rows;
-
-			m_ptr = new T[m_rows];
-			for (int i = 0; i < m_rows; ++i) {
-				m_ptr[i] = vector.m_ptr[i];
-			}
-		}
-		return *this;
-	}
-
-
-	Vector<T> operator+ (Vector<T> const & vector) const
-	{
-		assert(m_rows == vector.m_rows);
-
-		Vector<T> result(*this);
-
-		for (int i = 0; i < m_rows; ++i) {
-			result.m_ptr[i] += vector.m_ptr[i];
-		}
-
-		return result;
-	}
-
-
-	Vector<T> operator- (Vector<T> const & vector) const
-	{
-		assert(m_rows == vector.m_rows);
-
-		Vector<T> result(*this);
-
-		for (int i = 0; i < m_rows; ++i) {
-			result.m_ptr[i] -= vector.m_ptr[i];
-		}
-
-		return result;
-	}
-
-
-	Vector<T> & operator+= (Vector<T> const & vector) const
-	{
-		*this = *this + vector;
-		return *this;
-	}
-
-
-	Vector<T> & operator-= (Vector<T> const & vector) const
-	{
-		*this = *this - vector;
-		return *this;
-	}
-
-
-	Vector<T> operator* (T const value) const
-	{
-		Vector<T> result(*this);
-
-		for (int i = 0; i < m_rows; ++i) {
-			result.m_ptr[i] *= value;
-		}
-		return result;
-	}
-
-
-	Vector<T> & operator*= (T const value)
-	{
-		*this = (*this) * value;
-		return *this;
-	}
-
-
-	T operator* (Vector<T> const & vector) const
-	{
-		assert(m_rows == vector.m_rows);
-
-		T result = 0;
-
-		for (int i = 0; i < m_rows; ++i) {
-			result += m_ptr[i] * vector.m_ptr[i];
-		}
-
-		return result;
-	}
-
-
-	Matrix<T> operator* (Matrix<T> const & matrix) const
-	{
-		//можем умножать вектор только на вектор-строку
-		assert(1 == matrix.getRows());
-
-		Vector<T> vector(*this);
-		int cols = matrix.getCols();
-		Matrix<T> result(m_rows, cols);
-
-
-		for (int i = 1; i <= result.getRows(); ++i) {
-			for (int j = 1; j <= result.getCols(); ++j)
-				result(i, j) += matrix(1, j) * vector(i);
-		}
-		return result;
-	}
-
-
-	T & operator() (int const i)
-	{
-		return m_ptr[i - 1];
-	}
-
-
-	T operator() (int const i) const
-	{
-		return m_ptr[i - 1];
-	}
-
-
-	bool operator== (Vector<T> const & vector) const
-	{
-		if (m_rows != vector.m_rows)
-			return false;
-		for (int i = 0; i < m_rows; ++i) {
-			if (m_ptr[i] != vector.m_ptr[i])
-				return false;
-		}
-		return true;
-	}
-
-
-	bool operator!= (Vector<T> const & vector) const {
-		return !(*this == vector);
-	}
-
-
-	inline int getRows() const { return m_rows; }
-
-
-	T getScalarProduct(Matrix<T> const & matrix) const
-	{
-		Vector<T> temp = (*this) * matrix;
-		return temp * (*this);
-	}
-
-	template <class T>
-	friend
-		std::ostream & operator<< (std::ostream & out, Vector<T> const & vector);
-
-
-	//power = 0, if norm is infinity
-	T norm(float power = 2) const
-	{
-		Vector<T> vector(*this);
-		T value = 0;
-
-
-		if (power == 1) {
-			for (int i = 1; i <= vector.m_rows; ++i)
-				value += abs(vector(i));
-			return value;
-		}
-
-		//case norm value is infinity
-		if (power == 0) {
-			for (int i = 1; i <= vector.m_rows; ++i) {
-				if (abs(vector(i) > value))
-					value = abs(vector(i));
-			}
-			return value;
-		}
-
-		//case norm = P, p in [2,inf)
-		for (int i = 1; i <= vector.m_rows; ++i)
-			value += (vector(i) * vector(i));
-		return pow(value, 1 / power);
-	}
-
-
-private:
-	int m_rows;
-	T * m_ptr;
-};
 
 
 template <class T>
@@ -357,7 +56,7 @@ public:
 		}
 	}
 
-
+	
 	Matrix<T>(std::string fileName)
 	{
 		readFromFile(fileName);
@@ -446,11 +145,33 @@ public:
 		using namespace std;
 		for (int i = 0; i < m_rows; ++i) {
 			for (int j = 0; j < m_cols; ++j)
-				cout << setprecision(PRECISION) << setw(SETRANGE)
+				cout << setprecision(Utility::PRECISION) << setw(Utility::SETRANGE)
 				<< setfill(' ') << m_ptr[i][j] << ' ';
 			cout << endl;
 		}
 		cout << endl;
+	}
+
+	void fprint(std::string fileName) const
+	{
+		Matrix<T> matrix(*this);
+		using namespace std;
+		fileName += ".txt";
+		ofstream fout(fileName, ios::in | ios::app);
+		if (!fout.is_open()) 
+			throw "Can't open output file";
+
+		for (int i = 1; i <= m_rows; ++i) {
+			for (int j = 1; j <= m_cols; ++j) {
+				fout << std::setprecision(Utility::PRECISION) <<
+					std::setw(Utility::SETRANGE) << std::setfill(' ') << matrix(i,j) << ' ';
+				if (fout.bad())
+					throw "Error while writing data!";
+			}
+			fout << std::endl;
+		}
+		fout << std::endl;
+		fout.close();
 	}
 
 
@@ -648,53 +369,6 @@ public:
 		m_ptr[index2 - 1] = tmp;
 	}
 
-
-	//a - low diag, b-main diag, c - up diag
-	void makeTridiagonal(T a, T b, T c)
-	{
-		assert(m_rows == m_cols);
-
-		int dim = m_rows;
-		for (int i = 0; i < m_rows - 1; ++i) {
-			m_ptr[i + 1][i] = a;
-			m_ptr[i][i] = b;
-			m_ptr[i][i + 1] = c;
-		}
-		m_ptr[dim - 1][dim - 1] = b;
-	}
-
-
-	void makeOrtogonal(int i, int j, T c, T s)
-	{
-		if (i != j) {
-
-			Matrix<T> result(m_rows, m_cols, 0);
-
-			for (int k = 1; k <= m_rows; ++k) {
-				result(k, k) = 1;
-			}
-			/*
-
-			result(i, i) = cos(angle);
-			result(j, j) = cos(angle);
-			result(i, j) = -sin(angle);
-			result(j, i) = sin(angle);
-			*/
-
-
-			result(i, i) = c;
-			result(j, j) = c;
-			result(i, j) = -s;
-			result(j, i) = s;
-
-			*this = result;
-			std::cout << result << std::endl;
-		}
-		else
-			throw "wrong parameter in making ortogonal";
-	}
-
-
 	Matrix<T> getMinor(int m, int k) const
 	{
 		assert((m <= m_rows) && (k <= m_cols) && (k > 0) && (m > 0));
@@ -749,7 +423,6 @@ public:
 		return result;
 	}
 
-
 	T norm(int const value) const
 	{
 		Matrix<T> matrix(*this);
@@ -781,7 +454,6 @@ public:
 		}
 		return max;
 	}
-
 
 	T getDeterminant() const
 	{
@@ -823,7 +495,6 @@ public:
 		return det;
 	}
 
-
 	bool isPositive() const
 	{
 		Matrix<T> matrix(*this);
@@ -844,7 +515,6 @@ public:
 		return true;
 	}
 
-
 	bool isSymmetric() const
 	{
 		Matrix<T> matrix(*this);
@@ -853,7 +523,6 @@ public:
 			return false;
 		return true;
 	}
-
 
 	Matrix<T> makeDiagonal(T const value) const
 	{
@@ -869,7 +538,53 @@ public:
 		return res;
 	}
 
+	//a - low diag, b-main diag, c - up diag
+	void makeTridiagonal(T a, T b, T c)
+	{
+		assert(m_rows == m_cols);
 
+		int dim = m_rows;
+		for (int i = 0; i < m_rows - 1; ++i) {
+			m_ptr[i + 1][i] = a;
+			m_ptr[i][i] = b;
+			m_ptr[i][i + 1] = c;
+		}
+		m_ptr[dim - 1][dim - 1] = b;
+	}
+
+	Matrix<T> makeOrtogonal(int i, int j, T c, T s)
+	{
+		if (i != j) {
+
+			Matrix<T> result(m_rows, m_cols, 0);
+
+			for (int k = 1; k <= m_rows; ++k) {
+				result(k, k) = 1;
+			}
+
+			/*
+			result(i, i) = cos(angle);
+			result(j, j) = cos(angle);
+			result(i, j) = -sin(angle);
+			result(j, i) = sin(angle);
+			*/
+
+
+			result(i, i) = c;
+			result(j, j) = c;
+			result(i, j) = -s;
+			result(j, i) = s;
+
+
+			return result;
+			//std::cout << "c = " << c << " s = " << s << std::endl;
+			//std::cout << result << std::endl;
+		}
+		else
+			throw "wrong parameter in making ortogonal";
+	}
+
+	//‘укнци€ обращени€ матрицы
 	Matrix<T> doInverse() const
 	{
 		Matrix<T> matrix(*this);
@@ -908,7 +623,7 @@ public:
 		return inMatrix;
 	}
 
-
+	//—тепенной метод дл€ максимального с.з.
 	T getMaxEigenvalue() const
 	{
 		Matrix<T> matrix(*this);
@@ -947,7 +662,7 @@ public:
 		return 0;
 	}
 
-
+	//—тепенной метод дл€ минимального с.з.
 	T getMinEigenvalue() const
 	{
 		if (this->isPositive()) {
@@ -1035,6 +750,14 @@ public:
 	void friend computeRichardsonParameters(Matrix<T> const & A, Vector<T> const & b);
 
 
+	template <typename T>
+	void friend computeQR(Matrix<T> A);
+
+
+	template<typename T>
+	Matrix<T> friend getHousholder(Matrix<T> A_matr);
+
+
 private:
 	int m_rows, m_cols;
 	T **  m_ptr;
@@ -1042,40 +765,13 @@ private:
 
 
 template <class T>
-std::ostream & operator<< (std::ostream & out, Vector<T> const & vector)
-{
-	for (int i = 0; i < vector.m_rows; ++i) {
-		out << std::setprecision(PRECISION)
-			<< vector.m_ptr[i] << std::endl;
-	}
-	return out;
-}
-
-
-template <class T>
 std::ostream & operator<< (std::ostream & out, Matrix<T> const & matrix)
 {
 	for (int i = 0; i < matrix.m_rows; ++i) {
 		for (int j = 0; j < matrix.m_cols; ++j)
-			out << std::setprecision(PRECISION) << std::setw(SETRANGE) <<
+			out << std::setprecision(Utility::PRECISION) << std::setw(Utility::SETRANGE) <<
 			std::setfill(' ') << matrix.m_ptr[i][j] << ' ';
 		out << std::endl;
 	}
 	return out;
-}
-
-
-template <class T>
-T elevate(const T m, int a)
-{
-	if (a == 0)
-		return 1;
-	if (a == 1)
-		return m;
-	if (a % 2 == 1) {
-		return elevate(m, a - 1) * m;
-	}
-	else {
-		return elevate(m * m, a / 2);
-	}
 }

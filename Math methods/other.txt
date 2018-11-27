@@ -1,0 +1,115 @@
+
+/*
+template<typename T>
+void computeQR(Matrix<T> A)
+{
+	Matrix<T> R(A);
+
+	int N = A.getRows();
+
+	Matrix<T> Q(N, N, 0);
+	Q = Q.makeDiagonal(1);
+
+	Matrix<T> tmp(N, N, 0);
+
+	T  c, s;
+
+	for (int i = 1; i <= N - 1; ++i)
+	{
+
+		for (int j = i + 1; j <= N; ++j)
+		{
+			c = R(i, j) / (sqrt(pow(R(i, i), 2) + pow(R(j, i), 2)));
+			s = R(j, i) / (sqrt(pow(R(i, i), 2) + pow(R(j, i), 2)));
+
+			tmp.makeOrtogonal(i, j, c, s);
+			R = R * tmp;
+			Q = Q * tmp;
+		}
+	}
+
+	std::cout << R << std::endl;
+	std::cout << Q << std::endl;
+
+	std::cout << Q * R << std::endl;
+
+}
+*/
+
+
+
+/*
+template <typename T>
+	void computeQRp(Matrix<T> matrix, Vector<T> b)
+{
+	Matrix<double> s(matrix);
+	Matrix<double> c(matrix);
+
+	s = matrix;
+	c = matrix;
+	T akk, akl, alk, all, bk, bl;
+
+	int rows = matrix.getRows();
+
+	for (int k = 1; k <= rows - 1; k++) {
+		for (int l = k + 1; l <= rows; l++) {
+			c(k, l) = matrix(k, k) / (sqrt(pow(matrix(k, k), 2) + pow(matrix(l, k), 2)));
+			s(k, l) = matrix(l, k) / (sqrt(pow(matrix(k, k), 2) + pow(matrix(l, k), 2)));
+
+			akk = matrix(k, k);
+			alk = matrix(l, k);
+			akl = matrix(k, l);
+			all = matrix(l, l);
+			matrix(k, k) = akk * c(k, l) + alk * s(k, l);
+			matrix(k, l) = akl * c(k, l) + all * s(k, l);
+			matrix(l, k) = -akk * s(k, l) + alk * c(k, l);
+			matrix(l, l) = -akl * s(k, l) + all * c(k, l);
+
+			bk = b(k); bl = b(l);
+			b(k) = bk * c(k, l) + bl * s(k, l);
+			b(l) = -bk * s(k, l) + bl * c(k, l);
+		}
+	}
+	std::cout << c;
+	std::cout << s;
+	std::cout << matrix;
+	std::cout << matrix * b;
+}
+*/ //??
+
+
+/*
+template <typename T>
+void computeQR( Matrix<T> m)
+{
+	Matrix<double> s(m.m_rows, m.m_cols);
+	Matrix<double> c(m.m_rows, m.m_cols);
+	Matrix<double> b(m.m_rows);
+	Matrix<double> matrix(m.m_rows, m.m_cols);
+	matrix = m;
+	s = matrix;
+	c = matrix;
+
+	T akk, akl, alk, all, bk, bl;
+	for (int k = 1; k <= m.m_rows - 1; k++) {
+		for (int l = k + 1; l <= m.m_cols; l++) {
+
+			c(k, l) = matrix(k, k) / (sqrt(pow(matrix(k, k), 2) + pow(matrix(l, k), 2)));
+			s(k, l) = matrix(l, k) / (sqrt(pow(matrix(k, k), 2) + pow(matrix(l, k), 2)));
+
+			akk = matrix(k, k);
+			alk = matrix(l, k);
+			akl = matrix(k, l);
+			all = matrix(l, l);
+			matrix(k, k) = akk * c(k, l) + alk * s(k, l);
+			matrix(k, l) = akl * c(k, l) + all * s(k, l);
+			matrix(l, k) = -akk * s(k, l) + alk * c(k, l);
+			matrix(l, l) = -akl * s(k, l) + all * c(k, l);
+
+			
+		}
+	}
+	std::cout << matrix;
+}
+
+*/
