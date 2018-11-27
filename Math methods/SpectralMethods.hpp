@@ -33,14 +33,14 @@ Matrix<T> getHouseholder(const Matrix<T> & A_mat) {
 
 	for (int k = 0; k < dim; k++) {
 		Matrix<T> a_vect(dim - k, 1);
-		Matrix<T> w_vect;
+		Matrix<T> w_vect(dim - k, 1);
 		for (int i = k; i < dim; i++) {
 			a_vect.m_ptr[i - k][0] = A_matr.m_ptr[i][k];
 		}
 
 		Matrix<T> e_vect(dim - k, 1);
 		e_vect.m_ptr[0][0] = 1;
-		double rk = a_vect.norm(1);
+		double rk = a_vect.norm(2);
 
 		if (A_matr.m_ptr[k][k] != 0) {
 			w_vect = a_vect - e_vect * (sign(A_matr.m_ptr[k][k]) * rk);
@@ -50,8 +50,8 @@ Matrix<T> getHouseholder(const Matrix<T> & A_mat) {
 			w_vect = a_vect - e_vect * rk;
 		}
 
-		if (w_vect.norm(1) != 0) {
-			w_vect = w_vect / w_vect.norm(1);
+		if (w_vect.norm(2) != 0) {
+			w_vect = w_vect / w_vect.norm(2);
 		}
 
 		Matrix<T> Hk(dim, dim);
@@ -65,20 +65,21 @@ Matrix<T> getHouseholder(const Matrix<T> & A_mat) {
 				Hk.m_ptr[i + k][j + k] -= 2 * w_matr.m_ptr[i][j];
 			}
 		}
+
 		H_matr = Hk * H_matr;
 		A_matr = Hk * A_matr;
 	}
-	std::cout << A_mat;
 	return H_matr;
 }
 
 template<typename T>
 void computeQR(Matrix<T> A_matr) {
+	int dim = A_matr.getRows();
 
-	Matrix<T> A_next;
-	Matrix<T> H_matr;
+	Matrix<T> A_next(dim,dim,0);
+	Matrix<T> H_matr(A_next);
 
-	Utility::EPSILON = 0.1;
+	//Utility::EPSILON = 0.000001;
 
 	int k = 0;
 
@@ -87,7 +88,7 @@ void computeQR(Matrix<T> A_matr) {
 		A_next = H_matr * A_matr * H_matr.doTransposition();
 		A_matr = A_next;
 		
-		if (A_next.lnorm() < Utility::EPSILON || k > 10000)
+		if (A_next.lnorm() < Utility::EPSILON)
 			break;
 	}
 

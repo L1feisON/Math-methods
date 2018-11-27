@@ -435,6 +435,7 @@ public:
 		//maximum sum
 		T max = 0;
 
+
 		//if 1 norm
 		if (value == 0) {
 			for (int i = 1; i <= m_rows; i++) {
@@ -453,6 +454,17 @@ public:
 					max = sum;
 				sum = 0;
 			}
+		}
+		if (value == 2) {
+			if (m_cols == 1)
+			{
+				T result = 0;
+				for (int i = 1; i <= m_rows; i++)
+					result += (*this)(i, 1) * (*this)(i, 1);
+				return sqrt(result);
+			}
+
+			else throw "matrix is not a vector in 2 norm";
 		}
 		return max;
 	}
