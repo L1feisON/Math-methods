@@ -113,3 +113,31 @@ void computeQR( Matrix<T> m)
 }
 
 */
+
+
+
+
+template <typename T>
+void computeQR(Matrix<T> A)
+{
+	int N = A.getRows();
+
+	T phi, t, c, s;
+
+	Matrix<T> Q(A.getRows(), A.getCols());
+
+	for (int i = 1; i <= N - 1; ++i) {
+		for (int j = i + 1; j <= N; ++j) {
+			t = 2 * A(i, j) / (A(i, i) - A(j, j));
+			phi = 0.5 * atan(t);
+			c = cos(phi);
+			s = sin(phi);
+
+			A(i, i) = c * c*A(i, i) + 2 * c*s*A(i, j) + s * s*A(j, j);
+			A(i, j) = s * c*(A(j, j) - A(i, i)) + A(i, j) * (c*c - s * s);
+			A(j, j) = s * s*A(i, i) + c * c*A(j, j) - 2 * c*s*A(i, j);
+			A(j, i) = A(i, j);
+		}
+	}
+	std::cout << A;
+}

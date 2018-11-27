@@ -15,6 +15,7 @@
 namespace Utility {
 extern int SETRANGE = 4;
 extern int PRECISION = 6;
+extern double EPSILON = 0.0001;
 }
 
 
@@ -330,11 +331,6 @@ public:
 			value += (vector(i) * vector(i));
 		return pow(value, 1 / power);
 	}
-
-
-
-	template<typename T>
-	Matrix<T> friend getHousholder(Matrix<T> A_matr);
 
 private:
 	int m_rows;

@@ -47,7 +47,6 @@ void computeLuMethod(Matrix<T> const & source)
 	lMatrix.print();
 }
 
-//Gauss method with simple division
 template <typename T>
 void computeGaussDivision(Matrix<T> const & m, Matrix<T> const & vector) {
 
@@ -100,7 +99,6 @@ void computeGaussDivision(Matrix<T> const & m, Matrix<T> const & vector) {
 	matrix.print();
 }
 
-//Gauss method with choosing host element
 template <typename T>
 void computeGaussHost(Matrix<T> const & m, Matrix<T> const & vect)
 {

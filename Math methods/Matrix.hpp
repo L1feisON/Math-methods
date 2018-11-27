@@ -369,6 +369,7 @@ public:
 		m_ptr[index2 - 1] = tmp;
 	}
 
+
 	Matrix<T> getMinor(int m, int k) const
 	{
 		assert((m <= m_rows) && (k <= m_cols) && (k > 0) && (m > 0));
@@ -423,6 +424,7 @@ public:
 		return result;
 	}
 
+
 	T norm(int const value) const
 	{
 		Matrix<T> matrix(*this);
@@ -454,6 +456,20 @@ public:
 		}
 		return max;
 	}
+
+
+	T lnorm() {
+		double result = 0;
+		for (int i = 1; i <= m_rows; i++) {
+			for (int j = 1; j <= m_cols; j++) {
+				if (i > j) {
+					result += (*this)(i, j) * (*this)(i, j);
+				}
+			}
+		}
+		return sqrt(result);
+	}
+
 
 	T getDeterminant() const
 	{
@@ -495,6 +511,7 @@ public:
 		return det;
 	}
 
+
 	bool isPositive() const
 	{
 		Matrix<T> matrix(*this);
@@ -515,6 +532,7 @@ public:
 		return true;
 	}
 
+
 	bool isSymmetric() const
 	{
 		Matrix<T> matrix(*this);
@@ -523,6 +541,7 @@ public:
 			return false;
 		return true;
 	}
+
 
 	Matrix<T> makeDiagonal(T const value) const
 	{
@@ -551,6 +570,7 @@ public:
 		}
 		m_ptr[dim - 1][dim - 1] = b;
 	}
+
 
 	Matrix<T> makeOrtogonal(int i, int j, T c, T s)
 	{
@@ -707,56 +727,41 @@ public:
 		return 0;
 	}
 
-
 	template <typename T>
 	friend void computeLuMethod(Matrix<T> const & source);
 
-
-	//can division by zero if m[i][i]=0
 	template <typename T>
 	friend void computeGaussDivision(Matrix<T> const & m, Matrix<T> const & vector);
 
-
-	//Gauss method with choosing host element
 	template <typename T>
 	friend void computeGaussHost(Matrix<T> const & m, Matrix<T> const & vect);
-
 
 	template <typename T>
 	friend void computeThomasAlgorithm(Matrix<T> const & m, Matrix<T> const & vect);
 
-
 	template <typename T>
 	friend void computeSimpleIteration(Matrix<T> const & A, Vector<T> const & b);
-
 
 	template <typename T>
 	friend void computeSteepestDescent(Matrix<T> const & A, Vector<T> const & b);
 
-
 	template <typename T>
 	friend void computeMinimumResiduals(Matrix<T> const & A, Vector<T> const & b);
-
 
 	template <typename T>
 	friend void computeGaussSeidel(Matrix<T> const & A, Vector<T> const & b);
 
-
 	template <typename T>
 	friend void computeRelaxation(Matrix<T> const & A, Vector<T> const & b);
 
+	template <typename T>
+	friend void computeQR(Matrix<T> A_matr);
 
 	template <typename T>
-	void friend computeRichardsonParameters(Matrix<T> const & A, Vector<T> const & b);
-
-
-	template <typename T>
-	void friend computeQR(Matrix<T> A);
-
+	friend void computeRichardsonParameters(Matrix<T> const & A, Vector<T> const & b);
 
 	template<typename T>
-	Matrix<T> friend getHousholder(Matrix<T> A_matr);
-
+	friend Matrix<T> getHouseholder(const Matrix<T> & A_mat);
 
 private:
 	int m_rows, m_cols;
